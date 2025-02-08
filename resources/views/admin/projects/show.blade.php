@@ -3,7 +3,7 @@
 
 <div class="card">
     <div class="card-header">
-        {{ trans('global.show') }} {{ trans('cruds.project.title') }}
+        Show {{ $config_data->module_name }}
     </div>
 
     <div class="card-body">
@@ -11,61 +11,24 @@
             <table class="table table-bordered table-striped">
                 <tbody>
                     <tr>
-                        <th>
-                            {{ trans('cruds.project.fields.id') }}
-                        </th>
-                        <td>
-                            {{ $project->id }}
-                        </td>
+                        <th>{{ trans('cruds.project.fields.id') }}</th>
+                        <td>{{ $data_items["data"]->id }}</td>
                     </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.project.fields.name') }}
-                        </th>
-                        <td>
-                            {{ $project->name }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.project.fields.client') }}
-                        </th>
-                        <td>
-                            {{ $project->client->first_name ?? '' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.project.fields.description') }}
-                        </th>
-                        <td>
-                            {!! $project->description !!}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.project.fields.start_date') }}
-                        </th>
-                        <td>
-                            {{ $project->start_date }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.project.fields.budget') }}
-                        </th>
-                        <td>
-                            {{ $project->budget }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.project.fields.status') }}
-                        </th>
-                        <td>
-                            {{ $project->status->name ?? '' }}
-                        </td>
-                    </tr>
+                    @foreach ($data_items["columns"] as $col)
+                        <tr>
+                            <th>
+                                {{ $data_items["custom_columns"][$col] ?? ucfirst(str_replace('_', ' ', $col)) }}
+                            </th>
+                            <td>
+                                @if(str_contains($col, '_id')) 
+                                    {{ optional($data_items["data"]->{str_replace('_id', '', $col)})->name ?? '' }}
+                                    {{ optional($data_items["data"]->{str_replace('_id', '', $col)})->first_name ?? '' }}
+                                @else
+                                    {{ $data_items["data"]->$col }}
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
             <a style="margin-top:20px;" class="btn btn-default" href="{{ url()->previous() }}">
