@@ -5,10 +5,13 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Project extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes,LogsActivity;
 
     public $table = 'projects';
 
@@ -30,6 +33,19 @@ class Project extends Model
         'deleted_at',
         'description',
     ];
+
+    protected static $logAttributes = [
+        'name',
+        'budget',
+        'client_id',
+        'status_id',
+        'start_date',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'description',
+        'start_date',
+    ]; 
 
     public function notes()
     {
@@ -64,5 +80,13 @@ class Project extends Model
     public function status()
     {
         return $this->belongsTo(ProjectStatus::class, 'status_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(self::$logAttributes)
+            ->useLogName($this->table)
+            ->logOnlyDirty(); 
     }
 }
