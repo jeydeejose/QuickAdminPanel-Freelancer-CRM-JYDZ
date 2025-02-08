@@ -159,7 +159,7 @@
                     </li>
                 @endcan
                 @can('user_management_access')
-                    <li class="nav-item has-treeview {{ request()->is('admin/permissions*') ? 'menu-open' : '' }} {{ request()->is('admin/roles*') ? 'menu-open' : '' }} {{ request()->is('admin/users*') ? 'menu-open' : '' }}">
+                    <li class="nav-item has-treeview {{ request()->is('admin/permissions*') ? 'menu-open' : '' }} {{ request()->is('admin/roles*') ? 'menu-open' : '' }} {{ request()->is('admin/users*') ? 'menu-open' : '' }} {{ request()->is('admin/activitylog*') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle" href="#">
                             <i class="fa-fw fas fa-users">
 
@@ -193,7 +193,7 @@
                                         </p>
                                     </a>
                                 </li>
-                            @endcan
+                            @endcan                           
                             @can('user_access')
                                 <li class="nav-item">
                                     <a href="{{ route("admin.users.index") }}" class="nav-link {{ request()->is('admin/users') || request()->is('admin/users/*') ? 'active' : '' }}">
@@ -205,7 +205,19 @@
                                         </p>
                                     </a>
                                 </li>
-                            @endcan
+                            @endcan      
+                            @can('activitylog_access')
+                                <li class="nav-item">
+                                    <a href="{{ route("admin.activitylog.index") }}" class="nav-link {{ request()->is('admin/activitylog') || request()->is('admin/activitylog/*') ? 'active' : '' }}">
+                                        <i class="fa-fw fas fa-list">
+
+                                        </i>
+                                        <p>
+                                            <span>Activity Logs</span>
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan                                                   
                         </ul>
                     </li>
                 @endcan
