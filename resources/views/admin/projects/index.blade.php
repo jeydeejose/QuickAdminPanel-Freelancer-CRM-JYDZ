@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 @section('content')
-@can('project_create')
+@can($config_data->module_perm_name.'_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route("admin.projects.create") }}">
-                {{ trans('global.add') }} {{ trans('cruds.project.title_singular') }}
+            <a class="btn btn-success" href="{{ route("$config_data->module_route.create") }}">
+                Add {{ $config_data->module_name }}
             </a>
         </div>
     </div>
@@ -22,74 +22,47 @@
                         <th width="10">
 
                         </th>
+                            <th>ID</th>
+                        @foreach ($data_items["columns"] as $col)
+                            <th>{{ $data_items["custom_columns"][$col] ?? ucfirst(str_replace('_', ' ', $col)) }}</th>
+                        @endforeach
                         <th>
-                            {{ trans('cruds.project.fields.id') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.project.fields.name') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.project.fields.client') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.project.fields.description') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.project.fields.start_date') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.project.fields.budget') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.project.fields.status') }}
-                        </th>
-                        <th>
-                            &nbsp;
+                            Action
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($projects as $key => $project)
-                        <tr data-entry-id="{{ $project->id }}">
+                    @foreach($data_items["data"] as $key => $dataValue)
+                        <tr data-entry-id="{{ $dataValue->id }}">
                             <td>
 
                             </td>
+                            <td> {{ $dataValue->id }} </td>
+                            @foreach ($data_items["columns"] as $col)
+                                <td>
+                                    @if(str_contains($col, '_id')) 
+                                        {{ optional($dataValue->{str_replace('_id', '', $col)})->first_name }}
+                                        {{ optional($dataValue->{str_replace('_id', '', $col)})->name }}
+                                    @else
+                                        {{ $dataValue->$col }}
+                                    @endif
+                                </td>
+                            @endforeach
                             <td>
-                                {{ $project->id ?? '' }}
-                            </td>
-                            <td>
-                                {{ $project->name ?? '' }}
-                            </td>
-                            <td>
-                                {{ $project->client->first_name ?? '' }}
-                            </td>
-                            <td>
-                                {{ $project->description ?? '' }}
-                            </td>
-                            <td>
-                                {{ $project->start_date ?? '' }}
-                            </td>
-                            <td>
-                                {{ $project->budget ?? '' }}
-                            </td>
-                            <td>
-                                {{ $project->status->name ?? '' }}
-                            </td>
-                            <td>
-                                @can('project_show')
-                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.projects.show', $project->id) }}">
+                                @can($config_data->module_perm_name.'_show')
+                                    <a class="btn btn-xs btn-primary" href="{{ route($config_data->module_route.'.show', $dataValue->id) }}">
                                         {{ trans('global.view') }}
                                     </a>
                                 @endcan
 
-                                @can('project_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.projects.edit', $project->id) }}">
+                                @can($config_data->module_perm_name.'_edit')
+                                    <a class="btn btn-xs btn-info" href="{{ route($config_data->module_route.'.edit', $dataValue->id) }}">
                                         {{ trans('global.edit') }}
                                     </a>
                                 @endcan
 
-                                @can('project_delete')
-                                    <form action="{{ route('admin.projects.destroy', $project->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                @can($config_data->module_perm_name.'_delete')
+                                    <form action="{{ route($config_data->module_route.'.destroy', $dataValue->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                         <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
@@ -111,11 +84,11 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('project_delete')
+@can($config_data->module_perm_name.'_delete')
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
   let deleteButton = {
     text: deleteButtonTrans,
-    url: "{{ route('admin.projects.massDestroy') }}",
+    url: "{{ route($config_data->module_route.'.massDestroy') }}",
     className: 'btn-danger',
     action: function (e, dt, node, config) {
       var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
@@ -143,7 +116,7 @@
 
   $.extend(true, $.fn.dataTable.defaults, {
     order: [[ 1, 'desc' ]],
-    pageLength: 100,
+    pageLength: 10,
   });
   $('.datatable-Project:not(.ajaxTable)').DataTable({ buttons: dtButtons })
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
