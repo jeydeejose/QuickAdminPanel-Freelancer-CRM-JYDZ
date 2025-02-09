@@ -21,9 +21,10 @@ class ProjectController extends Controller
     public function __construct()
     {
         $this->config_data = (object) [
-            "module_name"=>"Project",
-            "module_perm_name"=>"project",
-            "module_route"=>"admin.projects",
+            "module_name"=>"Project", //Module name
+            "module_perm_name"=>"project", //Permission name
+            "module_route"=>"admin.projects", //Web route
+            "module_view_folder"=>"admin.projects", //View folder
         ];
 
         view()->share('config_data', $this->config_data);
@@ -47,7 +48,7 @@ class ProjectController extends Controller
             "custom_columns" => $custom_columns,
         ];
 
-        return view($this->config_data->module_route.'.index', compact('data_items'));
+        return view($this->config_data->module_view_folder.'.index', compact('data_items'));
     }
 
     public function show(Project $project)
@@ -68,7 +69,7 @@ class ProjectController extends Controller
             "custom_columns" => $custom_columns,
         ];
 
-        return view($this->config_data->module_route.'.show', compact('data_items'));
+        return view($this->config_data->module_view_folder.'.show', compact('data_items'));
     }
 
     public function create()
@@ -81,7 +82,7 @@ class ProjectController extends Controller
             "clients" => $clients,
             "statuses" => $statuses,
         ];
-        return view($this->config_data->module_route.'.create_update', compact('data_items'));
+        return view($this->config_data->module_view_folder.'.create_update', compact('data_items'));
     }
 
     public function store(StoreProjectRequest $request)
@@ -105,7 +106,7 @@ class ProjectController extends Controller
             "project" => $project,
             "data" => $data,
         ];
-        return view($this->config_data->module_route.'.create_update', compact('data_items'));
+        return view($this->config_data->module_view_folder.'.create_update', compact('data_items'));
     }
 
     public function update(UpdateProjectRequest $request, Project $project)

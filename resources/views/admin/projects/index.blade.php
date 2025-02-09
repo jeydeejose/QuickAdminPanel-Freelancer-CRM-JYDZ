@@ -11,7 +11,7 @@
 @endcan
 <div class="card">
     <div class="card-header">
-        {{ trans('cruds.project.title_singular') }} {{ trans('global.list') }}
+        {{ $config_data->module_name }} List
     </div>
 
     <div class="card-body">
